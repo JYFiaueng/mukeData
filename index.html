@@ -5,22 +5,25 @@
 	<link rel="shortcut icon" href="favicon.ico">
 	<title>Document</title>
 	<style>
-		html{background-color: rgba(0,0,0,0.1);}
-		#start{position: fixed;top: 0;left: 0;right: 0;margin: auto;width: 200px;height: 30px;border-radius: 3px;background-color: #666;line-height: 30px;text-align: center;color: #fff;font-size: 22px;cursor: pointer;}
+		html,body{background-color: rgba(0,0,0,0);height: 100%;overflow: hidden;margin: 0;padding: 0;}
+		#start{position: fixed;top: 0;left: 0;right: 0;margin: auto;width: 200px;height: 30px;border-radius: 3px;background-color: #666;line-height: 30px;text-align: center;color: #fff;font-size: 22px;cursor: pointer;z-index: 1;}
 		#start:hover{background-color: #000;}
-		#main{position: absolute;top: 0;left: 0;right: 0;bottom: 0;margin: auto;width: 1000px;height: 600px;}
+		#mainMP{position: absolute;top: 0;left: 0;bottom: 0;margin: auto;width: 50%;height: 100%;}
+		#mainTime{position: absolute;top: 0;left: 50%;bottom: 0;margin: auto;width: 50%;height: 100%;}
 	</style>
 </head>
 <body>
 	<div id="start">点击获取数据表</div>
-	<div id="main"></div>
+	<div id="mainMP"></div>
+	<div id="mainTime"></div>
 	<script src="//cdn.bootcss.com/echarts/3.4.0/echarts.common.min.js"></script>
 	<script>
-		var main = echarts.init(document.getElementById('main'));
+		var mainMP = echarts.init(document.getElementById('mainMP'));
+		var mainTime = echarts.init(document.getElementById('mainTime'));
 		var start = document.getElementById('start');
-		var option = {
+		var optionMP = {
 			title: {
-					text: '慕课用户数据',
+					text: '慕课用户经验值',
 					subtext:'Lorem',
 					x:'40%',
 					textStyle:{
@@ -51,8 +54,8 @@
 			},
 			legend: {
 					data:['经验值(单位K)'],
-					x:'50%',
-					top:'5%'
+					x:'10%',
+					top:'7%'
 			},
 			xAxis: {
 					data: ["0-1","1-2","2-3","3-4","4-5","5-6", "6-7", "7-8", "8-9", "9-10", "10-20","20-30", "30-40", "40-50", "50+"]
@@ -99,17 +102,97 @@
 					data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			}]
 	};
-
-	var d;
+	var optionTime = {
+			title: {
+					text: '慕课用户学习时长',
+					subtext:'Lorem',
+					x:'40%',
+					textStyle:{
+						color:'#000',
+						fontSize:'22'
+					},
+					subTextStyle:{
+						color:'#000',
+						fontSize:'16'
+					}
+			},
+			tooltip: {
+				"trigger": "axis",
+				"axisPointer": {
+					"type": "shadow",
+					textStyle: {
+						color: "#fff"
+					}
+				},
+			},
+			"grid": {
+				"borderWidth": 0,
+				"top": 110,
+				"bottom": 95,
+				textStyle: {
+					color: "#fff"
+				}
+			},
+			legend: {
+					data:['学习时长(单位小时)'],
+					x:'10%',
+					top:'7%'
+			},
+			xAxis: {
+					data: ["0-1","1-10","10-20","20-30","30-40","40-50","50-60", "60-70", "70-80", "80-90", "90-100", "100-200","200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900", "900-1000", "1000+"]
+			},
+			yAxis: {},
+			"dataZoom": [{
+				"show": true,
+				"height": 30,
+				"xAxisIndex": [
+					0
+				],
+				bottom: 30,
+				"start": 10,
+				"end": 80,
+				handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+				handleSize: '110%',
+				handleStyle:{
+					color:"#C0392B",
+				},
+				textStyle:{
+					color:"#000"
+				},
+				borderColor:"#90979c"
+			}, {
+				"type": "inside",
+				"show": true,
+				"height": 15,
+				"start": 0,
+				"end": 35
+			}],
+			series: [{
+					name: '学习时长(单位小时)',
+					type: 'bar',
+					"itemStyle": {
+						"normal": {
+							"color": "#C0392B",
+							"barBorderRadius": 0,
+							"label": {
+								"show": true,
+								"position": "top"
+							}
+						}
+					},
+					data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			}]
+	};
 	start.onclick = function (){
-		main.setOption(option);
+		mainMP.setOption(optionMP);
+		mainTime.setOption(optionTime);
 	};
 
-	ajaxGet('./data/mukeData.json', function(data){
-		d = JSON.parse(data);
-		option.series[0].data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		var op = option.series[0], mp;
-		option.title.subtext = '数据总数' + d.length;
+	ajaxGet('./data/mukeDataMP.json', function(data){
+		var d = JSON.parse(data);
+		optionMP.series[0].data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		var op = optionMP.series[0], mp;
+		optionMP.title.subtext = '数据总数' + d.length;
 		for(var i = 0; i < d.length; i++){
 			mp = parseInt(d[i]);
 			if(mp>=0 && mp < 1000) {op.data[0]++;continue;}
@@ -127,6 +210,38 @@
 			if(mp>=30000 && mp < 40000) {op.data[12]++;continue;}
 			if(mp>=40000 && mp < 50000) {op.data[13]++;continue;}
 			if(mp>=50000) {op.data[14]++;continue;}
+		}
+	}, function(){
+		alert('ajax请求出错，数据拉不下来！');
+	});
+	ajaxGet('./data/mukeDataTime.json', function(data){
+		var d = JSON.parse(data), mp;
+		optionTime.series[0].data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		var op = optionTime.series[0];
+		optionTime.title.subtext = '数据总数' + d.length;
+		for(var i = 0; i < d.length; i++){
+			mp = parseInt(d[i]);
+			if(mp===0) {op.data[0]++;continue;}
+			if(mp>=1 && mp < 10) {op.data[1]++;continue;}
+			if(mp>=10 && mp < 20) {op.data[2]++;continue;}
+			if(mp>=20 && mp < 30) {op.data[3]++;continue;}
+			if(mp>=30 && mp < 40) {op.data[4]++;continue;}
+			if(mp>=40 && mp < 50) {op.data[5]++;continue;}
+			if(mp>=50 && mp < 60) {op.data[6]++;continue;}
+			if(mp>=60 && mp < 70) {op.data[7]++;continue;}
+			if(mp>=70 && mp < 80) {op.data[8]++;continue;}
+			if(mp>=80 && mp < 90) {op.data[9]++;continue;}
+			if(mp>=90 && mp < 100) {op.data[10]++;continue;}
+			if(mp>=100 && mp < 200) {op.data[11]++;continue;}
+			if(mp>=200 && mp < 300) {op.data[12]++;continue;}
+			if(mp>=300 && mp < 400) {op.data[13]++;continue;}
+			if(mp>=400 && mp < 500) {op.data[14]++;continue;}
+			if(mp>=500 && mp < 600) {op.data[15]++;continue;}
+			if(mp>=600 && mp < 700) {op.data[16]++;continue;}
+			if(mp>=700 && mp < 800) {op.data[17]++;continue;}
+			if(mp>=800 && mp < 900) {op.data[18]++;continue;}
+			if(mp>=900 && mp < 1000) {op.data[19]++;continue;}
+			if(mp>=1000) {op.data[20]++;continue;}
 		}
 	}, function(){
 		alert('ajax请求出错，数据拉不下来！');
